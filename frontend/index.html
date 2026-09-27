@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resume Shortlisting Agent</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>Resume Shortlisting Agent</h1>
+            <p>AI-powered resume screening and job matching</p>
+        </header>
+
+        <main>
+
+            <section class="card">
+
+                <h2>Resume</h2>
+
+                <input
+                    type="file"
+                    id="resumeFile"
+                    accept=".txt"
+                >
+
+                <textarea
+                    id="resume"
+                    placeholder="Paste your resume text here..."
+                ></textarea>
+
+            </section>
+
+
+            <section class="card">
+
+                <h2>Job Description</h2>
+
+                <textarea
+                    id="jobDescription"
+                    placeholder="Paste the job description here..."
+                ></textarea>
+
+            </section>
+
+
+            <button id="analyzeBtn">
+                Analyze Resume
+            </button>
+
+
+            <div id="loading" class="loading hidden">
+                Analyzing resume...
+            </div>
+
+
+            <section id="result" class="result hidden">
+
+                <h2>Analysis Result</h2>
+
+                <div class="score-box">
+                    <div>
+                        <span>Resume Score</span>
+                        <strong id="score">0</strong>/100
+                    </div>
+
+                    <div>
+                        <span>Decision</span>
+                        <strong id="decision">-</strong>
+                    </div>
+                </div>
+
+
+                <div class="result-grid">
+
+                    <div class="result-card">
+                        <h3>Matched Skills</h3>
+                        <ul id="matchedSkills"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Missing Skills</h3>
+                        <ul id="missingSkills"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Strengths</h3>
+                        <ul id="strengths"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Suggestions</h3>
+                        <ul id="suggestions"></ul>
+                    </div>
+
+                </div>
+
+
+                <div class="result-card">
+
+                    <h3>Key Points</h3>
+
+                    <ul id="keyPoints"></ul>
+
+                </div>
+
+            </section>
+
+
+            <div id="error" class="error hidden"></div>
+
+        </main>
+
+
+        <footer>
+            <p>Powered by FastAPI, LangGraph & Groq</p>
+        </footer>
+
+    </div>
+
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
