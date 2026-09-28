@@ -28,8 +28,11 @@
                 <input
                     type="file"
                     id="resumeFile"
-                    accept=".txt"
+                    accept=".txt,.pdf,.docx,.png,.jpg,.jpeg,.webp"
+                    aria-describedby="fileHelp fileStatus"
                 >
+                <p id="fileHelp" class="file-help">TXT, PDF, DOCX, PNG, JPG, or WebP. Maximum file size: 5 MB.</p>
+                <p id="fileStatus" class="file-status" aria-live="polite"></p>
 
                 <textarea
                     id="resume"
@@ -51,7 +54,7 @@
             </section>
 
 
-            <button id="analyzeBtn">
+            <button id="analyzeBtn" class="analyze-button">
                 Analyze Resume
             </button>
 
@@ -126,6 +129,9 @@
     </div>
 
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
     <script src="app.js"></script>
 
 </body>

@@ -86,7 +86,17 @@ git push -u origin main
 
 ## Live deployment
 
-This API is ready for cloud deployment on:
+### Frontend
+
+- Vercel: https://frontend-8b0erm9vi-snk18.vercel.app/
+
+The URL currently redirects to Vercel login when checked, so it is not publicly accessible yet. Review the project's Deployment Protection settings in Vercel.
+
+### API
+
+The frontend currently calls `https://resume-shortlisting-agent.onrender.com/review`.
+
+The API can also be deployed on:
 
 - Render
 - Railway
@@ -105,6 +115,17 @@ Add the environment variable:
 ```env
 GROQ_API_KEY=your_key_here
 ```
+
+## Resume upload formats
+
+The frontend accepts TXT, text-based PDF, DOCX, PNG, JPG/JPEG, and WebP files up to 5 MB. PDF and DOCX text is extracted in the browser; image files use browser OCR. Legacy `.doc` files and scanned PDFs without selectable text are not supported. Users can paste resume text directly as an alternative.
+
+## Suggested next steps
+
+1. Disable or configure Vercel Deployment Protection if the app should be public, then open the deployment URL in a private browser window.
+2. Confirm the Render API is awake at `https://resume-shortlisting-agent.onrender.com/health` and that the frontend can reach it.
+3. Redeploy the frontend and test one file of each supported type, an oversized file, and a file just under the 5 MB limit.
+4. If legacy Word documents or scanned PDFs are required, add server-side document parsing and OCR to the API.
 
 ## Notes
 
