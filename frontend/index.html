@@ -54,13 +54,23 @@
             </section>
 
 
-            <button id="analyzeBtn" class="analyze-button">
-                Analyze Resume
-            </button>
+            <div class="action-row">
+                <button id="analyzeBtn" class="analyze-button">
+                    Analyze Resume
+                </button>
+                <button id="clearBtn" class="clear-button" type="button">
+                    Clear
+                </button>
+            </div>
 
 
-            <div id="loading" class="loading hidden">
-                Analyzing resume...
+            <div id="loading" class="loading hidden" role="status" aria-live="polite">
+                <span class="loading-spinner" aria-hidden="true"></span>
+                <div class="loading-copy">
+                    <strong>Analysis in progress</strong>
+                    <span id="progressMessage">Sending resume and job description for analysis...</span>
+                </div>
+                <div class="progress-track" aria-hidden="true"><span></span></div>
             </div>
 
 
@@ -69,15 +79,34 @@
                 <h2>Analysis Result</h2>
 
                 <div class="score-box">
-                    <div>
-                        <span>Resume Score</span>
-                        <strong id="score">0</strong>/100
+                    <div class="score-summary">
+                        <div
+                            id="scoreMeter"
+                            class="score-meter"
+                            role="meter"
+                            aria-label="Resume match score"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow="0"
+                        >
+                            <div class="score-meter-inner">
+                                <strong id="score">0</strong>
+                                <span>/100</span>
+                            </div>
+                        </div>
+                        <span class="score-label">Resume match score</span>
                     </div>
 
-                    <div>
+                    <div class="decision-summary">
                         <span>Decision</span>
-                        <strong id="decision">-</strong>
+                        <strong id="decision" class="decision-label">-</strong>
                     </div>
+                </div>
+
+                <div class="result-actions">
+                    <button id="downloadBtn" class="utility-button" type="button" disabled>
+                        Download report
+                    </button>
                 </div>
 
 
@@ -117,7 +146,7 @@
             </section>
 
 
-            <div id="error" class="error hidden"></div>
+            <div id="error" class="error hidden" role="alert"></div>
 
         </main>
 

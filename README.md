@@ -1,19 +1,32 @@
 # Resume Shortlisting App
 
-This app reviews a resume against a job description and returns:
+Compare resume text with a job description and view a keyword-based match score, recommendation, matched and missing skills, strengths, suggestions, and key points. The web frontend can extract text from supported uploads, display the result, and download a plain-text report.
 
-- a score out of 100
-- shortlist / human review / reject decision
-- matched skills
-- missing skills
-- strengths
-- improvement suggestions
-- key review points
+## What works today
 
-It can run in two modes:
+- Resume input by pasted text or TXT, text-based PDF, DOCX, PNG, JPG/JPEG, and WebP upload (maximum 5 MB).
+- PDF and DOCX text extraction in the browser; OCR for supported image files.
+- FastAPI review endpoint that matches terms from a fixed skill list and returns a score and recommendation.
+- Result score visualization, clear form, and downloadable text report in the web frontend.
 
-1. Local Streamlit dashboard
-2. FastAPI backend for web deployment
+The score is a basic keyword match, not a complete assessment of candidate suitability. Experience/education matching, semantic matching, and the staged AI workflow below are not implemented yet. Legacy `.doc` and scanned PDFs are not supported.
+
+## Future AI workflow
+
+The following is a suggested roadmap, not current behavior:
+
+```text
+Resume
+  -> Job description
+  -> Skill extraction
+  -> Experience matching
+  -> Education matching
+  -> Keyword and semantic matching
+  -> AI explanation
+  -> Final report
+```
+
+Suggested implementation order: improve structured resume extraction, add section-aware experience and education matching, add semantic similarity, then generate explanations with evidence linked to resume sections. Keep a human reviewer in the loop and evaluate scoring against representative examples before using it for hiring decisions.
 
 ## Local setup
 
@@ -41,6 +54,17 @@ uv run streamlit run app.py
 cd resume_shortlisting_app
 uv run uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
+
+## Run the web frontend locally
+
+In a separate terminal:
+
+```bash
+cd resume_shortlisting_app/frontend
+python -m http.server 5500
+```
+
+Open http://localhost:5500. The frontend uses the deployed Render API by default. For local API testing, change `API_URL` in `frontend/app.js` to `http://localhost:8000/review`.
 
 ## Test the API
 
@@ -90,7 +114,7 @@ git push -u origin main
 
 - Vercel: https://frontend-8b0erm9vi-snk18.vercel.app/
 
-The URL currently redirects to Vercel login when checked, so it is not publicly accessible yet. Review the project's Deployment Protection settings in Vercel.
+The URL redirected to Vercel login during the last check, so public access was not confirmed. Check Vercel Deployment Protection, then test the URL in a private browser window after deploying the latest frontend.
 
 ### API
 
@@ -116,19 +140,14 @@ Add the environment variable:
 GROQ_API_KEY=your_key_here
 ```
 
-## Resume upload formats
-
-The frontend accepts TXT, text-based PDF, DOCX, PNG, JPG/JPEG, and WebP files up to 5 MB. PDF and DOCX text is extracted in the browser; image files use browser OCR. Legacy `.doc` files and scanned PDFs without selectable text are not supported. Users can paste resume text directly as an alternative.
-
 ## Suggested next steps
 
-1. Disable or configure Vercel Deployment Protection if the app should be public, then open the deployment URL in a private browser window.
-2. Confirm the Render API is awake at `https://resume-shortlisting-agent.onrender.com/health` and that the frontend can reach it.
-3. Redeploy the frontend and test one file of each supported type, an oversized file, and a file just under the 5 MB limit.
-4. If legacy Word documents or scanned PDFs are required, add server-side document parsing and OCR to the API.
+1. Configure Vercel access and deploy the latest frontend; verify the app in a private browser window.
+2. Check API health at `https://resume-shortlisting-agent.onrender.com/health`, then test analysis from the deployed frontend.
+3. Test each supported upload type, the 5 MB boundary, invalid files, clear, and report download.
+4. Implement and evaluate the future AI workflow above in small stages, beginning with section-aware resume extraction.
 
 ## Notes
 
-- The main resume scoring is keyword-based, which is good for fast local testing.
-- If `GROQ_API_KEY` is configured, Groq can provide extra AI review content.
+- The current API score is keyword-based. The optional Groq helper is not currently included in the API response contract.
 - Do not commit `.env` to GitHub.
