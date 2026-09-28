@@ -112,9 +112,9 @@ git push -u origin main
 
 ### Frontend
 
-- Vercel: https://frontend-8b0erm9vi-snk18.vercel.app/
+- Vercel: https://frontend-fh4eh9aju-snk18.vercel.app/
 
-The URL redirected to Vercel login during the last check, so public access was not confirmed. Check Vercel Deployment Protection, then test the URL in a private browser window after deploying the latest frontend.
+If the deployment redirects to Vercel login, check Vercel Deployment Protection and verify public access in a private browser window.
 
 ### API
 
