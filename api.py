@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from resume_analyzer import review_resume
+from resume_analyzer import generate_tailored_resume, review_resume
 
 app = FastAPI(
     title="Resume Review API",
@@ -34,6 +34,7 @@ class ReviewResponse(BaseModel):
     strengths: list[str]
     suggestions: list[str]
     key_points: list[str]
+    tailored_resume: str
 
 
 @app.get("/")
@@ -52,6 +53,10 @@ def review_api(payload: ReviewRequest):
         payload.resume,
         payload.job_description
     )
+    tailored_resume = generate_tailored_resume(
+        payload.resume,
+        payload.job_description
+    )
 
     return ReviewResponse(
         score=result["score"],
@@ -61,6 +66,7 @@ def review_api(payload: ReviewRequest):
         strengths=result["strengths"],
         suggestions=result["suggestions"],
         key_points=result["key_points"],
+        tailored_resume=tailored_resume,
     )
 
 
