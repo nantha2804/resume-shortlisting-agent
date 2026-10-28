@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+from io import BytesIO
 from typing import List, Dict, Any
 
 from dotenv import load_dotenv
@@ -60,6 +61,56 @@ def normalize_text(value: str) -> str:
     if not value:
         return ""
     return re.sub(r"\s+", " ", value.strip().lower())
+
+
+def extract_resume_text(file_bytes: bytes, filename: str) -> str:
+    """Extract text from supported resume formats, including optional image OCR."""
+    extension = os.path.splitext(filename)[1].lower()
+    if extension == ".txt":
+        return file_bytes.decode("utf-8-sig", errors="ignore").strip()
+    if extension == ".pdf":
+        try:
+            from pypdf import PdfReader
+            reader = PdfReader(BytesIO(file_bytes))
+            return "\n".join(page.extract_text() or "" for page in reader.pages).strip()
+        except Exception as exc:
+            raise ValueError(f"Could not read the PDF file: {exc}") from exc
+    if extension == ".docx":
+        try:
+            from docx import Document
+            document = Document(BytesIO(file_bytes))
+            paragraphs = [paragraph.text for paragraph in document.paragraphs]
+            paragraphs.extend(cell.text for table in document.tables for row in table.rows for cell in row.cells)
+            return "\n".join(paragraphs).strip()
+        except Exception as exc:
+            raise ValueError(f"Could not read the DOCX file: {exc}") from exc
+    if extension == ".doc":
+        raise ValueError("Legacy .doc files are not supported directly. Save the file as .docx or PDF and try again.")
+    if extension in {".png", ".jpg", ".jpeg"}:
+        try:
+            from PIL import Image
+            import pytesseract
+            return pytesseract.image_to_string(Image.open(BytesIO(file_bytes))).strip()
+        except ImportError as exc:
+            raise ValueError("Image OCR requires Pillow, pytesseract, and the Tesseract application.") from exc
+        except Exception as exc:
+            raise ValueError(f"Could not extract text from the image: {exc}") from exc
+    raise ValueError(f"Unsupported file type: {extension or 'unknown'}")
+
+
+def generate_tailored_resume(resume_text: str, job_description: str) -> str:
+    """Generate editable resume content using the candidate's evidence and job skills."""
+    matched = extract_skills(resume_text)
+    required = extract_skills(job_description)
+    relevant = [skill for skill in required if skill in matched]
+    return "\n".join([
+        "TAILORED RESUME", "", "PROFESSIONAL SUMMARY",
+        f"Candidate with experience relevant to {', '.join(relevant[:8]) or 'the target role'}. Resume content has been tailored to emphasize evidence aligned with the job description.", "",
+        "CORE SKILLS", ", ".join(sorted(set(matched + relevant))) or "Add verified skills from your experience.", "",
+        "RELEVANT EXPERIENCE AND ACHIEVEMENTS", "Review the original resume evidence below and rewrite each bullet with measurable outcomes.",
+        resume_text.strip(), "", "TARGETED KEYWORDS", ", ".join(required) or "Add keywords from the job description only when accurate.", "",
+        "Note: Verify every statement and add dates, employers, education, and measurable results before applying.",
+    ])
 
 
 def extract_skills(text: str) -> List[str]:
