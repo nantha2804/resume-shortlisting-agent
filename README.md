@@ -64,7 +64,7 @@ cd resume_shortlisting_app/frontend
 python -m http.server 5500
 ```
 
-Open http://localhost:5500. The frontend uses the deployed Render API by default. For local API testing, change `API_URL` in `frontend/app.js` to `http://localhost:8000/review`.
+Open http://localhost:5500. The frontend uses the same-origin `/review` API route, which is correct for the combined Vercel deployment. For local API testing, change `API_URL` in `frontend/app.js` to `http://localhost:8000/review`.
 
 ## Test the API
 
@@ -108,42 +108,24 @@ git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO.git
 git push -u origin main
 ```
 
-## Live deployment
+## Live deployment on Vercel
 
-### Frontend
+This repository is configured as one Vercel project. The static frontend is served from `frontend/`, and the Python serverless API is served from `api/index.py`. The frontend calls `/review`, so no separate frontend API URL is required.
 
-- Vercel: https://frontend-fh4eh9aju-snk18.vercel.app/
+In the Vercel project settings:
 
-If the deployment redirects to Vercel login, check Vercel Deployment Protection and verify public access in a private browser window.
+1. Set Root Directory to `.` (or leave it blank) when the Vercel repository is already this project. Do not enter `resume_shortlisting_app` unless that folder is actually nested inside the connected repository.
+2. Keep the Framework Preset as `Other` and leave the Build Command and Output Directory empty.
+3. Add `GROQ_API_KEY` under Settings → Environment Variables for the environments you use.
+4. Redeploy from the latest commit.
+5. Verify `/health` on the deployed domain, then open the root page and run one analysis.
 
-### API
-
-The frontend currently calls `https://resume-shortlisting-agent.onrender.com/review`.
-
-The API can also be deployed on:
-
-- Render
-- Railway
-- Fly.io
-- Azure App Service
-- Docker VPS
-
-Use the start command:
-
-```bash
-uvicorn api:app --host 0.0.0.0 --port 10000
-```
-
-Add the environment variable:
-
-```env
-GROQ_API_KEY=your_key_here
-```
+Do not commit `.env`; use Vercel Environment Variables instead. If the deployment redirects to Vercel login, review Deployment Protection and test the URL in a private browser window.
 
 ## Suggested next steps
 
-1. Configure Vercel access and deploy the latest frontend; verify the app in a private browser window.
-2. Check API health at `https://resume-shortlisting-agent.onrender.com/health`, then test analysis from the deployed frontend.
+1. Add the environment variable in Vercel and redeploy the combined project.
+2. Check `https://YOUR-VERCEL-DOMAIN/health`, then test analysis from the deployed frontend.
 3. Test each supported upload type, the 5 MB boundary, invalid files, clear, and report download.
 4. Implement and evaluate the future AI workflow above in small stages, beginning with section-aware resume extraction.
 

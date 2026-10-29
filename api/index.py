@@ -31,6 +31,11 @@ def health_check() -> dict[str, str]:
     return {"status": "ok", "service": "resume-shortlisting-agent"}
 
 
+@app.get("/health")
+def health() -> dict[str, str]:
+    return {"status": "ok", "service": "resume-shortlisting-agent"}
+
+
 @app.post("/review")
 async def review(request: Request) -> dict:
     """Review either the browser's JSON payload or a multipart file upload."""
