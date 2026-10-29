@@ -1,5 +1,6 @@
-const API_URL =
-    "https://resume-shortlisting-agent.onrender.com/review";
+// The Vercel deployment serves both the frontend and the API.
+// Keeping this relative also makes local/static preview easy to configure.
+const API_URL = "/review";
 
 
 const resume = document.getElementById("resume");
@@ -17,6 +18,9 @@ const progressMessage = document.getElementById("progressMessage");
 const result = document.getElementById("result");
 const errorBox = document.getElementById("error");
 const scoreMeter = document.getElementById("scoreMeter");
+const tailoredResumeSection = document.getElementById("tailoredResumeSection");
+const tailoredResume = document.getElementById("tailoredResume");
+const downloadPdfBtn = document.getElementById("downloadPdfBtn");
 
 let latestAnalysis = null;
 let activeRequestController = null;
@@ -215,6 +219,8 @@ clearBtn.addEventListener("click", function () {
     fileStatus.textContent = "";
     latestAnalysis = null;
     result.classList.add("hidden");
+    tailoredResumeSection.classList.add("hidden");
+    tailoredResume.value = "";
     loading.classList.add("hidden");
     downloadBtn.disabled = true;
     document.getElementById("score").textContent = "0";
@@ -259,8 +265,55 @@ function renderAnalysis(data) {
     displayList("strengths", data.strengths);
     displayList("suggestions", data.suggestions);
     displayList("keyPoints", data.key_points);
+
+    if (typeof data.tailored_resume === "string" && data.tailored_resume.trim()) {
+        tailoredResume.value = data.tailored_resume.trim();
+        tailoredResumeSection.classList.remove("hidden");
+    } else {
+        tailoredResume.value = "";
+        tailoredResumeSection.classList.add("hidden");
+    }
+
     downloadBtn.disabled = false;
 }
+
+
+downloadPdfBtn.addEventListener("click", function () {
+    const content = tailoredResume.value.trim();
+
+    if (!content) {
+        showError("There is no generated tailored resume to download.");
+        return;
+    }
+
+    const pdfApi = window.jspdf;
+    if (!pdfApi?.jsPDF) {
+        showError("The PDF generator could not be loaded. Refresh the page and try again.");
+        return;
+    }
+
+    const pdf = new pdfApi.jsPDF({ unit: "pt", format: "letter" });
+    const margin = 48;
+    const lineHeight = 16;
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const lines = pdf.splitTextToSize(content, pageWidth - margin * 2);
+    let y = margin;
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(11);
+
+    lines.forEach((line) => {
+        if (y > pageHeight - margin) {
+            pdf.addPage();
+            y = margin;
+        }
+        pdf.text(line, margin, y);
+        y += lineHeight;
+    });
+
+    pdf.save(`tailored-resume-${new Date().toISOString().slice(0, 10)}.pdf`);
+});
 
 
 function showError(message) {

@@ -143,6 +143,28 @@
 
                 </div>
 
+                <div id="tailoredResumeSection" class="result-card hidden">
+
+                    <h3>Generated Tailored Resume</h3>
+
+                    <p class="file-help">
+                        Review and edit the generated content before downloading it.
+                    </p>
+
+                    <textarea
+                        id="tailoredResume"
+                        rows="24"
+                        aria-label="Generated tailored resume"
+                    ></textarea>
+
+                    <div class="result-actions">
+                        <button id="downloadPdfBtn" class="utility-button" type="button">
+                            Download tailored resume PDF
+                        </button>
+                    </div>
+
+                </div>
+
             </section>
 
 
@@ -161,6 +183,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.9.0/mammoth.browser.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>
 
 </body>
