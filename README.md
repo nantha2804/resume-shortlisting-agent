@@ -1,5 +1,9 @@
 # Resume Shortlisting App
 
+## Live demo
+
+[Open the live demo](https://frontend-1atoauzea-snk18.vercel.app/)
+
 Compare resume text with a job description and view a keyword-based match score, recommendation, matched and missing skills, strengths, suggestions, and key points. The web frontend can extract text from supported uploads, display the result, and download a plain-text report.
 
 ## What works today
